@@ -4,7 +4,7 @@
 ydwe lua引擎(以下简称lua引擎)是一个嵌入到《魔兽争霸III》(以下简称魔兽)中的一个插件，它可以让魔兽可以执行lua并且调用魔兽的导出函数(在common.j内定义的函数)，就像使用jass那样。本说明假定你已经掌握了jass和lua的相关语法，有关语法的问题不再另行解释。
 
 ##入口
-在jass内调用 `call Cheat("exec-lua: hello.lua")`，这等价于在lua里调用了 `require 'hello.lua'` 。lua引擎已经把地图内的文件加载到搜索路径，所以地图内的hello.lua将会得到执行。
+在jass内调用 `call Cheat("exec-lua: hello")`，这等价于在lua里调用了 `require 'hello'` 。lua引擎已经把地图内的文件加载到搜索路径，所以地图内的hello.lua将会得到执行。
 
 ##lua引擎对标准lua的修改
 为了适合在魔兽内使用lua引擎对lua略有修改。 
@@ -18,12 +18,12 @@ ydwe lua引擎(以下简称lua引擎)是一个嵌入到《魔兽争霸III》(以
 lua引擎一共有12个内置库，可以通过"require '库名'"调用。  
 
 * jass.common
+* jass.ai
 * jass.globals
 * jass.japi
 * jass.hook
 * jass.runtime
 * jass.slk
-* jass.storm
 * jass.console
 * jass.debug
 * jass.log
@@ -37,7 +37,16 @@ jass.common库包含common.j内注册的所有函数。
 	local jass = require 'jass.common'
 	print(jass.GetHandleId(jass.Player(0)))
 ```
-	
+
+##jass.ai
+jass.ai库包含common.ai内注册的所有函数。 
+
+```lua
+	local jass = require 'jass.common'
+	local ai = require 'jass.ai'
+	print(ai.UnitAlive(jass.GetTriggerUnit()))
+```
+
 ##jass.globals
 jass.globals库可以让你访问到jass内的全局变量。
 
@@ -129,19 +138,6 @@ slk包含
 获取数据时使用的索引你可以在物体编辑器中通过Ctrl+D来查询到  
 
 注意，当访问正确时返回值永远是字符串。如果你获取的是某个单位的生命值，你可能需要使用tonumber来进行转换。当访问不正确时将返回nil。
-
-##jass.storm
-jass.storm库可以读取mpq/本地硬盘的文件，并可以向本地硬盘写文件。
-
-```lua
-	local storm = require 'jass.storm'
-	local buf = storm.load('war3map.j')
-	if buf then
-		print(buf)
-		print(storm.save('save_war3map.j', buf))
-	end
-```
-
 
 ##jass.runtime
 ###jass.runtime库可以在地图运行时获取lua引擎的信息或修改lua引擎的部分配置。
@@ -310,7 +306,7 @@ jass.debug库能帮助你更深入地剖析lua引擎的内部机制。
 ```lua
 	local jass = require 'jass.common'
 	local dbg = require 'jass.debug'
-	print(dbg.functiondef(jass.GetUnitX))
+	print(table.unpack(dbg.functiondef(jass.GetUnitX)))
 ```
 
 * globaldef jass.globals内值的定义

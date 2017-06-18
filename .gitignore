@@ -1,2 +1,5 @@
-test/
-*.w3x
+/*.w3x
+/*.j
+/*.lua
+/*.vj
+src/import/war3map.lua
